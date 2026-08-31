@@ -14,6 +14,7 @@ class BodyTypeScreen extends StatefulWidget {
   final bool isLb;
   final String age;
   final ActivityLevel activity;
+  final String allergy;
 
   const BodyTypeScreen({
     super.key,
@@ -24,6 +25,7 @@ class BodyTypeScreen extends StatefulWidget {
     required this.isLb,
     required this.age,
     required this.activity,
+    this.allergy = '',
   });
 
   @override
@@ -32,6 +34,10 @@ class BodyTypeScreen extends StatefulWidget {
 
 class _BodyTypeScreenState extends State<BodyTypeScreen> {
   BodyType _selectedType = BodyType.average;
+
+  String get _avatarAsset => widget.gender == Gender.male
+      ? 'lib/assets/images/avatar_male.png'
+      : 'lib/assets/images/avatar_female.png';
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +85,9 @@ class _BodyTypeScreenState extends State<BodyTypeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildBodyOption(BodyType.slim, Icons.accessibility_new, 0.9),
-                    _buildBodyOption(BodyType.average, Icons.accessibility_new, 1.3),
-                    _buildBodyOption(BodyType.heavy, Icons.accessibility_new, 0.9),
+                    _buildBodyOption(BodyType.slim, 'Slim'),
+                    _buildBodyOption(BodyType.average, 'Average'),
+                    _buildBodyOption(BodyType.heavy, 'Heavy'),
                   ],
                 ),
               ),
@@ -100,6 +106,9 @@ class _BodyTypeScreenState extends State<BodyTypeScreen> {
                         age: widget.age,
                         activity: widget.activity,
                         bodyType: _selectedType,
+                        // FIX: forward the allergy value all the way through
+                        // instead of dropping it here.
+                        allergy: widget.allergy,
                       ),
                     ),
                   );
@@ -142,27 +151,67 @@ class _BodyTypeScreenState extends State<BodyTypeScreen> {
     );
   }
 
-  Widget _buildBodyOption(BodyType type, IconData icon, double defaultScale) {
+  // NOTE: there are no dedicated ectomorph/mesomorph/endomorph art assets in
+  // the project yet (only one avatar_male.png / avatar_female.png). Until
+  // those exist, we visually differentiate the three options by horizontally
+  // scaling the same avatar image (narrower for slim, wider for heavy) so the
+  // selection at least *looks* different and the choice carries through to
+  // the "avatar ready" screen. Swap the `Image.asset` below for real
+  // per-body-type art as soon as it's available.
+  Widget _buildBodyOption(BodyType type, String label) {
     final isSelected = _selectedType == type;
-    final scale = isSelected ? 1.3 : 0.85;
+    final scale = isSelected ? 1.15 : 0.85;
+    final widthScale = switch (type) {
+      BodyType.slim => 0.8,
+      BodyType.average => 1.0,
+      BodyType.heavy => 1.25,
+    };
+
     return GestureDetector(
       onTap: () => setState(() => _selectedType = type),
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 200),
-        opacity: isSelected ? 1.0 : 0.4,
-        child: AnimatedScale(
-          duration: const Duration(milliseconds: 200),
-          scale: scale,
-          child: Container(
-            width: 90,
-            height: 220,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F8FA),
-              borderRadius: BorderRadius.circular(12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: isSelected ? 1.0 : 0.4,
+            child: AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: scale,
+              child: Container(
+                width: 90,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF7F8FA),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? AppColors.primaryBlue : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Transform.scale(
+                    scaleX: widthScale,
+                    child: Image.asset(
+                      _avatarAsset,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
             ),
-            child: Icon(icon, size: 60, color: Colors.grey.shade500),
           ),
-        ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? AppColors.primaryBlue : AppColors.textGrey,
+            ),
+          ),
+        ],
       ),
     );
   }

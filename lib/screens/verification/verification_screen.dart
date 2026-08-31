@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme.dart';
+import '../onboarding/onboarding_intro_screen.dart';
 
 class VerificationScreen extends StatefulWidget {
   final String email;
@@ -34,6 +35,16 @@ class _VerificationScreenState extends State<VerificationScreen> {
   void _onVerifyPressed() {
     // TODO: replace with real backend verification later
     setState(() => _isVerified = true);
+    _goToOnboardingAfterDelay();
+  }
+
+  Future<void> _goToOnboardingAfterDelay() async {
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const OnboardingIntroScreen()),
+      );
+    }
   }
 
   @override

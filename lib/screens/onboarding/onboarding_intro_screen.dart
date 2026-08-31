@@ -14,17 +14,12 @@ class OnboardingIntroScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 40),
-              // Placeholder avatar figures - replace with real avatar assets later
+              const SizedBox(height: 24),
+              // Combined male + female avatar image
               Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildAvatarPlaceholder(isMale: false),
-                    const SizedBox(width: 16),
-                    _buildAvatarPlaceholder(isMale: true),
-                  ],
+                child: Image.asset(
+                  'lib/assets/images/avatar_intro.png',
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: 24),
@@ -75,25 +70,6 @@ class OnboardingIntroScreen extends StatelessWidget {
               const SizedBox(height: 32),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAvatarPlaceholder({required bool isMale}) {
-    return Container(
-      width: 130,
-      height: 280,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Center(
-        child: Icon(
-          isMale ? Icons.man : Icons.woman,
-          size: 100,
-          color: Colors.grey.shade400,
         ),
       ),
     );

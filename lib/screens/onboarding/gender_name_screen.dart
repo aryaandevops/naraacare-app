@@ -59,17 +59,11 @@ class _GenderNameScreenState extends State<GenderNameScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: _buildGenderCard(
-                      gender: Gender.female,
-                      icon: Icons.woman,
-                    ),
+                    child: _buildGenderCard(gender: Gender.female),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildGenderCard(
-                      gender: Gender.male,
-                      icon: Icons.man,
-                    ),
+                    child: _buildGenderCard(gender: Gender.male),
                   ),
                 ],
               ),
@@ -132,8 +126,9 @@ class _GenderNameScreenState extends State<GenderNameScreen> {
     );
   }
 
-  Widget _buildGenderCard({required Gender gender, required IconData icon}) {
+  Widget _buildGenderCard({required Gender gender}) {
     final isSelected = _selectedGender == gender;
+    final isMale = gender == Gender.male;
     return GestureDetector(
       onTap: () => setState(() => _selectedGender = gender),
       child: Container(
@@ -148,7 +143,23 @@ class _GenderNameScreenState extends State<GenderNameScreen> {
         child: Stack(
           children: [
             Center(
-              child: Icon(icon, size: 90, color: Colors.grey.shade400),
+              child: isMale
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        'lib/assets/images/avatar_male.png',
+                        fit: BoxFit.contain,
+                        height: 210,
+                      ),
+                    )
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        'lib/assets/images/avatar_female.png',
+                        fit: BoxFit.contain,
+                        height: 210,
+                      ),
+                    ),
             ),
             Positioned(
               top: 8,

@@ -147,6 +147,9 @@ class _WeightScreenState extends State<WeightScreen> {
                               heightCm: widget.heightCm,
                               weight: _weightController.text.trim(),
                               isLb: _isLb,
+                              // FIX: previously not passed, so the allergy the
+                              // user typed here was silently lost.
+                              allergy: _allergyController.text.trim(),
                             ),
                           ),
                         );

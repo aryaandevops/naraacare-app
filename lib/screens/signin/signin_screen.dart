@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme.dart';
+import '../home/home_screen.dart';
+import '../onboarding/gender_name_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -15,9 +17,58 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
   bool _passwordVisible = false;
   bool _showError = false;
+  bool _isSubmitting = false;
 
   bool get _isFormValid =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+
+  Future<void> _handleSignIn() async {
+    setState(() {
+      _isSubmitting = true;
+      _showError = false;
+    });
+
+    try {
+      // TODO: replace with your actual sign-in call, e.g.
+      // final user = await AuthService.instance.signIn(
+      //   email: _emailController.text.trim(),
+      //   password: _passwordController.text,
+      // );
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      // TEMPORARY test trigger - remove once real backend check exists
+      if (_passwordController.text != 'correct123') {
+        if (!mounted) return;
+        setState(() {
+          _isSubmitting = false;
+          _showError = true;
+        });
+        return;
+      }
+
+      if (!mounted) return;
+
+      // TODO: once a real backend/profile exists, pull the user's saved
+      // name and gender instead of deriving a placeholder from the email.
+      final displayName = _emailController.text.split('@').first;
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(
+            name: displayName.isEmpty ? 'there' : displayName,
+            gender: Gender.female,
+          ),
+        ),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+        _showError = true;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -113,7 +164,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 obscureText: !_passwordVisible,
                 onChanged: (_) => setState(() => _showError = false),
                 decoration: InputDecoration(
-                  hintText: 'Create a password',
+                  hintText: 'Enter your password',
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -161,15 +212,8 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: 8),
 
               ElevatedButton(
-                onPressed: _isFormValid
-                    ? () {
-                        // TEMPORARY test trigger - remove once real backend check exists
-                        if (_passwordController.text != 'correct123') {
-                          setState(() => _showError = true);
-                          return;
-                        }
-                        // TODO: navigate to home/dashboard once backend is live
-                      }
+                onPressed: (_isFormValid && !_isSubmitting)
+                    ? _handleSignIn
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryBlue,
@@ -179,10 +223,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
+                child: _isSubmitting
+                    ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.4,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'Sign In',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
               ),
               const SizedBox(height: 20),
 
@@ -204,7 +257,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 },
                 icon: Image.asset('lib/assets/images/G.png', width: 20, height: 20),
                 label: const Text(
-                  'Sign up with Google',
+                  'Sign in with Google',
                   style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.primaryBlue),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -223,7 +276,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 },
                 icon: Image.asset('lib/assets/images/apple.png', width: 20, height: 20),
                 label: const Text(
-                  'Sign up with Apple',
+                  'Sign in with Apple',
                   style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.primaryBlue),
                 ),
                 style: OutlinedButton.styleFrom(

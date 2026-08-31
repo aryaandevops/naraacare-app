@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
+import 'gender_name_screen.dart';
+import '../home/home_screen.dart';
 
 class SavedDetailsScreen extends StatefulWidget {
-  const SavedDetailsScreen({super.key});
+  final String name;
+  final Gender gender;
+
+  const SavedDetailsScreen({
+    super.key,
+    required this.name,
+    required this.gender,
+  });
 
   @override
   State<SavedDetailsScreen> createState() => _SavedDetailsScreenState();
@@ -18,8 +27,18 @@ class _SavedDetailsScreenState extends State<SavedDetailsScreen> {
   Future<void> _redirect() async {
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
-      // TODO: replace with your actual Home/Dashboard screen once built
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      // FIX: previously did `popUntil isFirst`, which just sent the user
+      // back to the splash screen instead of into the app. Now routes into
+      // the real Home screen and clears the onboarding stack behind it.
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(
+            name: widget.name,
+            gender: widget.gender,
+          ),
+        ),
+        (route) => false,
+      );
     }
   }
 

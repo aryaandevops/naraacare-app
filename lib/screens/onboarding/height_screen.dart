@@ -31,6 +31,10 @@ class _HeightScreenState extends State<HeightScreen> {
     }
   }
 
+  String get _avatarAsset => widget.gender == Gender.male
+      ? 'lib/assets/images/avatar_male.png'
+      : 'lib/assets/images/avatar_female.png';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,8 +132,19 @@ class _HeightScreenState extends State<HeightScreen> {
                           color: const Color(0xFFF7F8FA),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Center(
-                          child: Icon(Icons.accessibility_new, size: 100, color: Colors.grey),
+                        // FIX: was a generic grey person icon. Now shows the
+                        // actual avatar matching the gender chosen in step 1,
+                        // scaled roughly with the selected height.
+                        child: Center(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 150),
+                            height: 140 +
+                                ((_heightCm - _minCm) / (_maxCm - _minCm)) * 100,
+                            child: Image.asset(
+                              _avatarAsset,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
                       ),
                     ),

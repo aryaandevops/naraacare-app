@@ -11,6 +11,7 @@ class AgeActivityScreen extends StatefulWidget {
   final double heightCm;
   final String weight;
   final bool isLb;
+  final String allergy;
 
   const AgeActivityScreen({
     super.key,
@@ -19,6 +20,7 @@ class AgeActivityScreen extends StatefulWidget {
     required this.heightCm,
     required this.weight,
     required this.isLb,
+    this.allergy = '',
   });
 
   @override
@@ -142,6 +144,9 @@ class _AgeActivityScreenState extends State<AgeActivityScreen> {
                               isLb: widget.isLb,
                               age: _ageController.text.trim(),
                               activity: _selectedActivity!,
+                              // FIX: forward the allergy value received from
+                              // WeightScreen instead of letting it dead-end here.
+                              allergy: widget.allergy,
                             ),
                           ),
                         );

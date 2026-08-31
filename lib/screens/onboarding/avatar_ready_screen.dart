@@ -4,6 +4,7 @@ import 'gender_name_screen.dart';
 import 'age_activity_screen.dart';
 import 'body_type_screen.dart';
 import 'saved_details_screen.dart';
+import '../home/home_screen.dart';
 
 class AvatarReadyScreen extends StatelessWidget {
   final Gender gender;
@@ -61,6 +62,22 @@ class AvatarReadyScreen extends StatelessWidget {
     }
   }
 
+  // FIX: previously always rendered the same avatar_male/avatar_female image
+  // no matter which body type was picked. There's no dedicated art per body
+  // type yet, so — same approach as body_type_screen.dart — we scale the
+  // existing avatar horizontally to reflect the selection. Replace with real
+  // per-body-type art as soon as it exists.
+  double get _bodyWidthScale {
+    switch (bodyType) {
+      case BodyType.slim:
+        return 0.8;
+      case BodyType.average:
+        return 1.0;
+      case BodyType.heavy:
+        return 1.25;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +95,7 @@ class AvatarReadyScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // Placeholder avatar - replace with real generated avatar asset later
+              // Avatar image, now scaled to reflect the selected body type
               Container(
                 width: 200,
                 height: 320,
@@ -86,10 +103,17 @@ class AvatarReadyScreen extends StatelessWidget {
                   color: const Color(0xFFF7F8FA),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  gender == Gender.male ? Icons.man : Icons.woman,
-                  size: 140,
-                  color: Colors.grey.shade400,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Transform.scale(
+                    scaleX: _bodyWidthScale,
+                    child: Image.asset(
+                      gender == Gender.male
+                          ? 'lib/assets/images/avatar_male.png'
+                          : 'lib/assets/images/avatar_female.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -120,7 +144,14 @@ class AvatarReadyScreen extends StatelessWidget {
                 onPressed: () {
                   // TODO: save this data to Firestore once backend is live
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SavedDetailsScreen()),
+                    MaterialPageRoute(
+                      // FIX: pass name/gender forward so SavedDetailsScreen
+                      // can hand off into HomeScreen instead of dead-ending.
+                      builder: (_) => SavedDetailsScreen(
+                        name: name,
+                        gender: gender,
+                      ),
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(

@@ -324,7 +324,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onPressed: () {
                   // TODO: Google sign up
                 },
-                icon: const Icon(Icons.g_mobiledata, size: 28),
+                icon: Image.asset('lib/assets/images/G.png', width: 20, height: 20),
                 label: const Text('Sign up with Google',
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 style: OutlinedButton.styleFrom(
@@ -342,7 +342,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onPressed: () {
                   // TODO: Apple sign up
                 },
-                icon: const Icon(Icons.apple, size: 22),
+                icon: Image.asset('lib/assets/images/apple.png', width: 20, height: 20),
                 label: const Text('Sign up with Apple',
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 style: OutlinedButton.styleFrom(
