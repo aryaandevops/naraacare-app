@@ -2,16 +2,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:naara_care_app/main.dart';
 
 void main() {
-testWidgets('app launches to splash screen', (WidgetTester tester) async {
-await tester.pumpWidget(const MyApp());
+  testWidgets('app launches to splash screen', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
 
-```
-await tester.pump();
+    // Let the initial frame render.
+    await tester.pump();
 
-await tester.pump(const Duration(seconds: 4));
+    // Allow the 4-second splash timer to complete.
+    await tester.pump(const Duration(seconds: 4));
 
-await tester.pump();
-```
-
-});
+    // Render the resulting screen.
+    await tester.pump();
+  });
 }
