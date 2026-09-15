@@ -3,9 +3,9 @@ import 'package:naara_care_app/main.dart';
 
 void main() {
   testWidgets('app launches to splash screen', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const NaraaCareApp());
 
-    // Let the initial frame render.
+    // Render the initial frame.
     await tester.pump();
 
     // Allow the 4-second splash timer to complete.
